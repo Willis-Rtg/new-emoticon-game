@@ -11,3 +11,4 @@
 .env.production
 .env.test
 .env.test.local
+.vercel
