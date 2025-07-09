@@ -1,5 +1,13 @@
 import { Outlet } from "react-router";
 
+export function meta() {
+  return [
+    {
+      title: "Emoticon Game",
+    },
+  ];
+}
+
 export default function Layout() {
   const year = new Date().getFullYear();
   return (
