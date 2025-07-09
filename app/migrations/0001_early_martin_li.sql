@@ -1,0 +1,1 @@
+ALTER TABLE "messages" ADD COLUMN "is_me" boolean DEFAULT false NOT NULL;
