@@ -200,7 +200,7 @@ export default function GamePage({ loaderData }: Route.ComponentProps) {
       <div className="absolute top-4 px-4 flex justify-between items-center max-w-lg w-full">
         <button
           onClick={onClickBack}
-          className="flex items-center justify-center bg-neutral-500 p-2 text-sm -m-2 rounded-xl text-white"
+          className="flex items-center justify-center bg-neutral-500 p-2 text-sm -m-2 rounded-xl text-white cursor-pointer"
         >
           <ArrowLeftIcon />
         </button>
