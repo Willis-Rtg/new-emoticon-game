@@ -174,7 +174,7 @@ export default function EmoticonUploadModal({
     formData.append("emoticonFile", emoticonUploadFile!);
     formData.append("filename", emoticonUploadFile!.name);
     console.log(formData.get("emoticonFile"));
-    fetch("/emoticon-upload", {
+    await fetch("/emoticon-upload", {
       method: "POST",
       body: formData,
     });
