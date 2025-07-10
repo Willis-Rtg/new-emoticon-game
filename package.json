@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "drizzle-kit generate && drizzle-kit migrate && react-router build",
+    "build": "drizzle-kit drop && drizzle-kit generate && drizzle-kit migrate && react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "db:generate": "drizzle-kit generate",
