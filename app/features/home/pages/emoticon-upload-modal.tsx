@@ -135,6 +135,7 @@ export default function EmoticonUploadModal({
   const navigation = useNavigation();
   const isSubmitting =
     navigation.state === "submitting" || navigation.state === "loading";
+  const [loading, setLoading] = useState(false);
 
   async function onChangeEmoticonUploadFile(
     e: React.ChangeEvent<HTMLInputElement>
@@ -173,11 +174,12 @@ export default function EmoticonUploadModal({
     formData.append("tags", selectedTags.join(","));
     formData.append("emoticonFile", emoticonUploadFile!);
     formData.append("filename", emoticonUploadFile!.name);
-    console.log(formData.get("emoticonFile"));
+    setLoading(true);
     await fetch("/emoticon-upload", {
       method: "POST",
       body: formData,
     });
+    setLoading(false);
     navigate("/");
   }
 
@@ -283,10 +285,10 @@ export default function EmoticonUploadModal({
           ))}
         </div>
         <button
-          disabled={isSubmitting}
+          disabled={loading}
           className="bg-blue-500 text-white  py-2 rounded-lg w-3/4"
         >
-          {isSubmitting ? "업로드 중..." : "업로드"}
+          {loading ? "업로드 중..." : "업로드"}
         </button>
         {formErrors.emoticonFile && (
           <p className="text-red-500 text-xs">{formErrors.emoticonFile}</p>
