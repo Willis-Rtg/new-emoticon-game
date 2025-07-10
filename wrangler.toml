@@ -1,0 +1,4 @@
+name="new-emoticon-game"
+main="app/root.tsx"
+compatibility_date = "2024-04-27"
+compatibility_flags = ["nodejs_compat"]
