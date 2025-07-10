@@ -124,7 +124,7 @@ export default function GameSaveModal() {
           />
           <button
             disabled={isSubmitting}
-            className="bg-blue-500 text-white  py-2 rounded-lg w-3/4"
+            className="bg-blue-500 text-white  py-2 rounded-lg w-3/4 cursor-pointer"
           >
             {isSubmitting ? "저장 중..." : "저장"}
           </button>

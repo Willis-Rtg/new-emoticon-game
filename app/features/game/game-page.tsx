@@ -206,7 +206,7 @@ export default function GamePage({ loaderData }: Route.ComponentProps) {
         </button>
         <button
           onClick={onClickNext}
-          className="flex items-center justify-center bg-neutral-500 p-2 text-sm -m-2 rounded-xl text-white"
+          className="flex items-center justify-center bg-neutral-500 p-2 text-sm -m-2 rounded-xl text-white cursor-pointer"
         >
           다음
         </button>
@@ -218,6 +218,9 @@ export default function GamePage({ loaderData }: Route.ComponentProps) {
       <div
         ref={messagesRef}
         className="flex flex-col items-center h-full gap-4 px-2 mt-16 w-full overflow-y-scroll"
+        style={{
+          scrollbarWidth: "none",
+        }}
       >
         {initMessages.map(
           (message: (typeof initMessages)[0], index: number) => {
