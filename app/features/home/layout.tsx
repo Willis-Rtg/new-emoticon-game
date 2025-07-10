@@ -74,7 +74,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
     forward();
   }, []);
   return (
-    <div className="flex flex-col items-center gap-8 min-h-0 mb-12">
+    <div className="flex flex-col items-center justify-center gap-4 min-h-0 mb-12 h-[100vh]">
       <h1 className="text-4xl font-bold">이모티콘 게임</h1>
       <div className="relative flex justify-center max-w-lg overflow-x-hidden px-4">
         <div
@@ -89,7 +89,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             return (
               <img
                 key={index}
-                className="w-40 h-40 rounded-full"
+                className="w-[20vh] h-[20vh] rounded-full"
                 src={emoticon.image_url || ""}
                 alt={emoticon.name}
               />
@@ -97,12 +97,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           })}
         </div>
       </div>
-      <div className="flex flex-col items-center 4 bg-amber-200/30 rounded-4xl p-8">
+      <div className="flex flex-col items-center 4 bg-amber-200/30 rounded-4xl p-4">
         <h3> - 인기순위 - </h3>
         <div className="flex items-end gap-4">
           <div className="flex flex-col items-center">
             <img
-              className={`w-36 h-36 rounded-full`}
+              className={`w-[16vh] h-[16vh] rounded-full`}
               src={popularEmoticons[2]?.image_url || ""}
               alt={popularEmoticons[2]?.name}
             />
@@ -110,7 +110,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </div>
           <div className="flex flex-col items-center">
             <img
-              className={`w-52 h-52 rounded-full`}
+              className={`w-[24vh] h-[24vh] rounded-full`}
               src={popularEmoticons[0]?.image_url || ""}
               alt={popularEmoticons[0]?.name}
             />
@@ -118,7 +118,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           </div>
           <div className="flex flex-col items-center">
             <img
-              className={`w-44 h-44 rounded-full`}
+              className={`w-[20vh] h-[20vh] rounded-full`}
               src={popularEmoticons[1]?.image_url || ""}
               alt={popularEmoticons[1]?.name}
             />
@@ -148,7 +148,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           to="game/add"
           className="flex items-center justify-center w-28 py-2 bg-[#F8E7E7] rounded-xl text-center"
         >
-          개임 <br />
+          게임 <br />
           만들기
         </Link>
       </div>
