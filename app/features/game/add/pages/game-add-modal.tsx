@@ -61,15 +61,13 @@ export async function loader({ request }: Route.LoaderArgs) {
     .offset(emoticonPage * 30)
     .orderBy(desc(emoticonsTable.created_at));
 
-  let DBTags = await db
-    .select({
-      id: tagTable.id,
-      name: tagTable.name,
-    })
-    .from(tagTable)
-    .limit(20)
-    .offset(tagPage * 20)
-    .orderBy(desc(tagTable.created_at));
+  let sorted_tags: TTag[] = [];
+
+  for (const item of DBEmoticons) {
+    if (!sorted_tags.find((tag) => tag.id === item.tag.id)) {
+      sorted_tags.push(item.tag);
+    }
+  }
 
   let DBEmoticons_sorted: TEmoticon[] = [];
   let noneOverlapEmoticon: any[] = [];
@@ -103,13 +101,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     };
   });
 
-  if (getItem === "emoticon" && emoticonPage > 0) {
-    DBTags = [];
-  } else if (getItem === "tag" && tagPage > 0) {
-    DBEmoticons_sorted = [];
-  }
-
-  return { DBEmoticons: DBEmoticons_sorted, initTags: DBTags, index };
+  return { DBEmoticons: DBEmoticons_sorted, initTags: sorted_tags, index };
 }
 
 export default function GameAddModal({ loaderData }: Route.ComponentProps) {
@@ -197,25 +189,26 @@ export default function GameAddModal({ loaderData }: Route.ComponentProps) {
     if (fetcher.data?.DBEmoticons) {
       if (fetcher.data.DBEmoticons.length > 0 && selectedTags.length < 1) {
         setInitEmoticons((prev) => [...prev, ...fetcher.data!.DBEmoticons]);
+        setTags((prev) => [...prev, ...fetcher.data!.initTags]);
         setEmoticonPage((prev) => prev + 1);
       }
     }
     setLoading(false);
   }, [fetcher.data?.DBEmoticons]);
 
-  async function fetchTags() {
-    setLoading(true);
-    await fetcher.load(`/game/add/modal?getItem=tag&tagPage=${tagPage}`);
-  }
-  useEffect(() => {
-    if (fetcher.data?.initTags) {
-      if (fetcher.data.initTags.length > 0 && selectedTags.length < 1) {
-        setTags((prev) => [...prev, ...fetcher.data!.initTags]);
-        setTagPage((prev) => prev + 1);
-      }
-    }
-    setLoading(false);
-  }, [fetcher.data?.initTags]);
+  // async function fetchTags() {
+  //   setLoading(true);
+  //   await fetcher.load(`/game/add/modal?getItem=tag&tagPage=${tagPage}`);
+  // }
+  // useEffect(() => {
+  //   if (fetcher.data?.initTags) {
+  //     if (fetcher.data.initTags.length > 0 && selectedTags.length < 1) {
+  //       setTags((prev) => [...prev, ...fetcher.data!.initTags]);
+  //       setTagPage((prev) => prev + 1);
+  //     }
+  //   }
+  //   setLoading(false);
+  // }, [fetcher.data?.initTags]);
 
   useEffect(() => {
     const obaserver = new IntersectionObserver(
@@ -228,26 +221,26 @@ export default function GameAddModal({ loaderData }: Route.ComponentProps) {
         ) {
           fetchEmoticons();
         }
-        if (
-          entries[0]?.isIntersecting &&
-          !loading &&
-          entries[0].target === tagScrollRef.current
-          // !startScroll
-        ) {
-          fetchTags();
-        }
+        // if (
+        //   entries[0]?.isIntersecting &&
+        //   !loading &&
+        //   entries[0].target === tagScrollRef.current
+        //   // !startScroll
+        // ) {
+        //   fetchTags();
+        // }
       }
     );
     if (emoticonScrollRef.current) {
       obaserver.observe(emoticonScrollRef.current);
     }
-    if (tagScrollRef.current) {
-      obaserver.observe(tagScrollRef.current);
-    }
+    // if (tagScrollRef.current) {
+    //   obaserver.observe(tagScrollRef.current);
+    // }
     return () => {
       obaserver.disconnect();
     };
-  }, [emoticonPage, tagPage]);
+  }, [emoticonPage]);
 
   const { setEmoticons, emoticons } = useGameAddContext();
 

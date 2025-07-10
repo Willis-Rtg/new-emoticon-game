@@ -2,6 +2,7 @@ import {
   Form,
   Link,
   redirect,
+  useActionData,
   useFetcher,
   useNavigate,
   useNavigation,
@@ -14,6 +15,7 @@ import type { Route } from "./+types/game-save-modal";
 import { useState } from "react";
 import db from "~/db";
 import { gamesEmoticons, gamesTable, messagesTable } from "~/features/schema";
+import { eq } from "drizzle-orm";
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
@@ -23,6 +25,19 @@ export async function action({ request }: Route.ActionArgs) {
 
   const parsedMessages = JSON.parse(messages);
   const parsedEmoticons = JSON.parse(emoticons);
+
+  const existGame = await db
+    .select()
+    .from(gamesTable)
+    .where(eq(gamesTable.name, game_name));
+
+  if (existGame.length) {
+    return {
+      formErrors: {
+        game_name: "이미 존재하는 게임 이름입니다",
+      },
+    };
+  }
 
   const newGame = await db
     .insert(gamesTable)
@@ -52,7 +67,8 @@ export default function GameSaveModal() {
   const navigate = useNavigate();
   const fetcher = useFetcher();
   const { messages, emoticons, game_name, setGameName } = useGameAddContext();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ [key: string]: string }>({});
+  const actionData = useActionData();
 
   const navigation = useNavigation();
   const isSubmitting =
@@ -61,18 +77,18 @@ export default function GameSaveModal() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!game_name) {
-      setError("게임 이름을 입력해주세요");
+      setError({ game_name: "게임 이름을 입력해주세요" });
       return;
     }
     if (messages.length < 5) {
-      setError("메시지가 5개 이상이어야 합니다");
+      setError({ messages: "메시지가 5개 이상이어야 합니다" });
       return;
     }
     if (emoticons.length < 2) {
-      setError("이모티콘이 2개 이상이어야 합니다");
+      setError({ emoticons: "이모티콘이 2개 이상이어야 합니다" });
       return;
     }
-    setError(null);
+    setError({});
 
     const body = new FormData();
     body.append("messages", JSON.stringify(messages));
@@ -112,7 +128,20 @@ export default function GameSaveModal() {
           >
             {isSubmitting ? "저장 중..." : "저장"}
           </button>
-          {error && <p className="text-red-500 text-xs">{error}</p>}
+          {error.game_name && (
+            <p className="text-red-500 text-xs">{error.game_name}</p>
+          )}
+          {error.messages && (
+            <p className="text-red-500 text-xs">{error.messages}</p>
+          )}
+          {error.emoticons && (
+            <p className="text-red-500 text-xs">{error.emoticons}</p>
+          )}
+          {actionData?.formErrors?.game_name && (
+            <p className="text-red-500 text-xs">
+              {actionData.formErrors.game_name}
+            </p>
+          )}
         </fetcher.Form>
       </div>
     </div>
