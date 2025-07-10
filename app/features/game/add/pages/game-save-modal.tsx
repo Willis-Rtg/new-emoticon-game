@@ -1,4 +1,11 @@
-import { Form, Link, redirect, useFetcher, useNavigate } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useFetcher,
+  useNavigate,
+  useNavigation,
+} from "react-router";
 import useGameAddContext, {
   type TEmoticonScore,
   type TMessage,
@@ -46,6 +53,10 @@ export default function GameSaveModal() {
   const fetcher = useFetcher();
   const { messages, emoticons, game_name, setGameName } = useGameAddContext();
   const [error, setError] = useState<string | null>(null);
+
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,8 +106,11 @@ export default function GameSaveModal() {
             value={game_name}
             onChange={(e) => setGameName(e.target.value)}
           />
-          <button className="bg-blue-500 text-white  py-2 rounded-lg w-3/4">
-            저장
+          <button
+            disabled={isSubmitting}
+            className="bg-blue-500 text-white  py-2 rounded-lg w-3/4"
+          >
+            {isSubmitting ? "저장 중..." : "저장"}
           </button>
           {error && <p className="text-red-500 text-xs">{error}</p>}
         </fetcher.Form>

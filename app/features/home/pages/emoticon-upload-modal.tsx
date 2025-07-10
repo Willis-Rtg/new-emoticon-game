@@ -2,7 +2,7 @@ import { useState } from "react";
 import { PlusIcon } from "lucide-react";
 import TagComponent from "~/common/components/tag-component";
 import { baseColors } from "~/common/constants";
-import { Form, redirect, useNavigate } from "react-router";
+import { Form, redirect, useNavigate, useNavigation } from "react-router";
 import type { Route } from "./+types/emoticon-upload-modal";
 import { z } from "zod";
 import db from "~/db";
@@ -132,6 +132,9 @@ export default function EmoticonUploadModal({
   const [uploadError, setUploadError] = useState<string>("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const navigate = useNavigate();
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
 
   async function onChangeEmoticonUploadFile(
     e: React.ChangeEvent<HTMLInputElement>
@@ -279,8 +282,11 @@ export default function EmoticonUploadModal({
             />
           ))}
         </div>
-        <button className="bg-blue-500 text-white  py-2 rounded-lg w-3/4">
-          업로드
+        <button
+          disabled={isSubmitting}
+          className="bg-blue-500 text-white  py-2 rounded-lg w-3/4"
+        >
+          {isSubmitting ? "업로드 중..." : "업로드"}
         </button>
         {formErrors.emoticonFile && (
           <p className="text-red-500 text-xs">{formErrors.emoticonFile}</p>

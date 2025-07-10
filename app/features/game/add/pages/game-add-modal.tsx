@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useFetcher, useNavigate } from "react-router";
+import { useFetcher, useNavigate, useNavigation } from "react-router";
 import TagComponent from "~/common/components/tag-component";
 import useGameAddContext from "../game-add-context";
 import type { Route } from "./+types/game-add-modal";
@@ -118,6 +118,10 @@ export default function GameAddModal({ loaderData }: Route.ComponentProps) {
   const [initEmoticons, setInitEmoticons] = useState<TEmoticon[]>(DBEmoticons);
   const [tags, setTags] = useState<TTag[]>(initTags);
   const navigate = useNavigate();
+
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
 
   function onClickTag(e: React.MouseEvent<HTMLElement>, tag: TTag) {
     const target = e.currentTarget;
@@ -384,10 +388,11 @@ export default function GameAddModal({ loaderData }: Route.ComponentProps) {
           ))}
         </div>
         <button
+          disabled={isSubmitting}
           onClick={onClickSelect}
           className="bg-neutral-500 text-white p-2 px-4 text-sm rounded-lg font-semibold"
         >
-          선택
+          {isSubmitting ? "선택 중..." : "선택"}
         </button>
         {error && <p className="text-red-500 text-xs">{error}</p>}
       </div>
