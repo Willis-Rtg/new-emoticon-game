@@ -61,7 +61,7 @@ export const gamesEmoticons = pgTable("games_emoticons", {
 
 export const gamesTable = pgTable("games", {
   id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   created_at: timestamp().notNull().defaultNow(),
   updated_at: timestamp().notNull().defaultNow(),
 });
