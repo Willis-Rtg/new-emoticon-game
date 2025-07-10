@@ -13,7 +13,7 @@ export default function Layout() {
   return (
     <div className="flex flex-col items-center justify-center h-screen w-full">
       <Outlet />
-      <div className="text-xs absolute bottom-2">
+      <div className="text-xs ">
         <span>&copy; {year} Emoticon Game by Willis. All rights reserved.</span>
       </div>
     </div>
