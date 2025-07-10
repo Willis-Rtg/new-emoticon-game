@@ -179,8 +179,8 @@ export default function EmoticonUploadModal({
       method: "POST",
       body: formData,
     });
-    setLoading(false);
     navigate("/");
+    setLoading(false);
   }
 
   return (
