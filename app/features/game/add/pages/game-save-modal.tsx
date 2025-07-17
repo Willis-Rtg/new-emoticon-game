@@ -16,20 +16,39 @@ import { useState } from "react";
 import db from "~/db";
 import { gamesEmoticons, gamesTable, messagesTable } from "~/features/schema";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+
+const gameSchema = z.object({
+  game_name: z.string().min(1, "게임 이름을 입력해주세요"),
+  messages: z.array(z.object({ message: z.string(), is_me: z.boolean() })),
+  emoticons: z.array(z.object({ id: z.number(), score: z.number() })),
+});
 
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const game_name = formData.get("game_name") as string;
-  const messages = formData.get("messages") as string;
-  const emoticons = formData.get("emoticons") as string;
+  const messagesJson = formData.get("messages") as string;
+  const emoticonsJson = formData.get("emoticons") as string;
 
-  const parsedMessages = JSON.parse(messages);
-  const parsedEmoticons = JSON.parse(emoticons);
+  const messages = JSON.parse(messagesJson);
+  const emoticons = JSON.parse(emoticonsJson);
+
+  const { data, success, error } = gameSchema.safeParse({
+    game_name,
+    messages,
+    emoticons,
+  });
+
+  if (!success) {
+    return {
+      formErrors: error.flatten().fieldErrors,
+    };
+  }
 
   const existGame = await db
     .select()
     .from(gamesTable)
-    .where(eq(gamesTable.name, game_name));
+    .where(eq(gamesTable.name, data.game_name));
 
   if (existGame.length) {
     return {
@@ -41,11 +60,11 @@ export async function action({ request }: Route.ActionArgs) {
 
   const newGame = await db
     .insert(gamesTable)
-    .values({ name: game_name })
+    .values({ name: data.game_name })
     .returning();
 
   const newMessages = await db.insert(messagesTable).values(
-    parsedMessages.map((message: TMessage) => ({
+    data.messages.map((message: TMessage) => ({
       game_id: newGame[0].id,
       content: message.message,
       is_me: message.is_me,
@@ -53,7 +72,7 @@ export async function action({ request }: Route.ActionArgs) {
   );
 
   const newEmoticons = await db.insert(gamesEmoticons).values(
-    parsedEmoticons.map((emoticon: TEmoticonScore) => ({
+    data.emoticons.map((emoticon: any) => ({
       game_id: newGame[0].id,
       emoticon_id: emoticon.id,
       score: emoticon.score,

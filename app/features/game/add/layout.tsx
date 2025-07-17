@@ -4,7 +4,7 @@ import { Link, Outlet } from "react-router";
 import useGameAddContext, { type TMessage } from "./game-add-context";
 import TagComponent from "~/common/components/tag-component";
 
-export default function GameAddPage() {
+export default function GameAddLayout() {
   const [message, setMessage] = useState<TMessage>({
     message: "",
     is_me: true,
