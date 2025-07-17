@@ -21,7 +21,21 @@ import { z } from "zod";
 const gameSchema = z.object({
   game_name: z.string().min(1, "게임 이름을 입력해주세요"),
   messages: z.array(z.object({ message: z.string(), is_me: z.boolean() })),
-  emoticons: z.array(z.object({ id: z.number(), score: z.number() })),
+  emoticons: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      image_url: z.string(),
+      tags: z.array(z.object({ id: z.number(), name: z.string() })),
+      score: z.object({
+        친절함: z.number(),
+        사회성: z.number(),
+        매력적: z.number(),
+        센스함: z.number(),
+        똑똑함: z.number(),
+      }),
+    })
+  ),
 });
 
 export async function action({ request }: Route.ActionArgs) {
@@ -32,6 +46,9 @@ export async function action({ request }: Route.ActionArgs) {
 
   const messages = JSON.parse(messagesJson);
   const emoticons = JSON.parse(emoticonsJson);
+
+  console.log(messages);
+  console.log(emoticons);
 
   const { data, success, error } = gameSchema.safeParse({
     game_name,
@@ -44,6 +61,8 @@ export async function action({ request }: Route.ActionArgs) {
       formErrors: error.flatten().fieldErrors,
     };
   }
+
+  console.log(data);
 
   const existGame = await db
     .select()
