@@ -45,12 +45,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   const { user, emoticons, popularEmoticons } = loaderData;
 
+  let allMoveDistance = 0;
+
+  for (const child of ref.current?.children || []) {
+    allMoveDistance += child.clientWidth;
+  }
+
   async function forward() {
     if (ref.current) {
       ref.current.style.transform = `translateX(-${
-        emoticons.length * 168 -
-        ref.current.offsetWidth +
-        (emoticons.length - 2) * 8
+        allMoveDistance - ref.current.offsetWidth + (emoticons.length - 2) * 8
       }px)`;
       await new Promise((resolve) =>
         setTimeout(resolve, emoticons.length * 1000)
